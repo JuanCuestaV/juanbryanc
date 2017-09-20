@@ -1,0 +1,91 @@
+/* Shared
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.button {
+  border-radius: 100px;
+}
+
+/* Sections
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.centrar {
+  padding: 1rem 0 1rem;
+  text-align: center;
+}
+
+.navbar{
+    position: relative;
+    min-height: 50px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+}
+
+.navbar-default{
+    background-image: linear-gradient(to bottom, #fff 0%, #f8f8f8 100%);
+    background-repeat: repeat-x;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 5px rgba(0, 0, 0, .075);
+}
+
+.navbar-default {
+    background-color: #f8f8f8;
+    border-color: #e7e7e7;
+}
+
+
+.navbar-brand, .navbar-nav > li > a {
+    text-shadow: 0 1px 0 rgba(255, 255, 255, .25);
+}
+
+.navbar-brand {
+    float: left;
+    height: 50px;
+    padding: 15px 15px;
+    font-size: 18px;
+    line-height: 20px;
+}
+
+/* bordes
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.borde_inferior {
+  border-bottom: 1px solid #ddd;
+}
+
+/* Bigger than 550 */
+@media (min-width: 550px) {
+  .centrar {
+    padding: 2px 0 1rem;
+  }
+}
+
+/* Bigger than 750 */
+@media (min-width: 750px) {
+  .centrar {
+    padding: 1px 0 2rem;
+  }  
+}
+
+/* Bigger than 1000 */
+@media (min-width: 1000px) {
+  .centrar {
+    padding: 1px 0 2rem;
+  }
+}
+
+ /*@media screen and (max-width: 768px){
+             .titulo{
+                    font-size: 16px;
+              }
+                
+              #logo_ard{
+                    
+                    width: 20%;
+                    height: 30%;
+                    margin-bottom: 0;
+                }
+            
+             nav #nombre_usuario {
+                 margin-top: 15px;
+                 font-size: 10pt;
+                
+            }
+                
+        }*/

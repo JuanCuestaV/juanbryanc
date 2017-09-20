@@ -1,0 +1,180 @@
+#include <SPI.h>
+#include <Ethernet.h>
+#include <SD.h>
+
+#define REQ_BUF_SZ   30
+
+byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+IPAddress ip(192, 168, 1, 45); 
+EthernetServer server(80); 
+
+File webFile;
+char HTTP_req[REQ_BUF_SZ] = {0}; 
+char req_index = 0;              
+
+
+void setup()
+{
+    pinMode(10, OUTPUT);
+    digitalWrite(10, HIGH);
+ 
+    Serial.begin(9600);          
+        
+    Serial.println("Initializing SD card...");
+    if (!SD.begin(4)) {
+        Serial.println("ERROR - SD card initialization failed!");
+        return;    // init failed
+    }
+    Serial.println("SUCCESS - SD card initialized.");
+    
+    if (!SD.exists("index.htm")) {
+        Serial.println("ERROR - Can't find index.htm file!");
+        return; 
+    }
+    Serial.println("SUCCESS - Found index.htm file.");
+
+    Ethernet.begin(mac, ip); 
+    server.begin(); 
+}
+
+void loop()
+{
+    EthernetClient client = server.available();  // try to get client
+
+    if (client) {  
+        boolean currentLineIsBlank = true;
+        while (client.connected()) {
+            if (client.available()) {   
+                char c = client.read(); 
+
+                if (req_index < (REQ_BUF_SZ - 1)) {
+                    HTTP_req[req_index] = c;          // save HTTP request character
+                    req_index++;
+                }
+
+                 Serial.print(c);
+                
+                if (c == '\n' && currentLineIsBlank) {   
+
+                    if(StrContains(HTTP_req, "GET / ") || StrContains(HTTP_req, "GET /index.htm")){
+                      client.println("HTTP/1.1 200 OK");
+                      client.println("Content-Type: text/html");
+                      client.println("Connection: close");
+                      client.println();
+                      webFile = SD.open("index.htm"); 
+                      
+                    }else if(StrContains(HTTP_req, "GET /imagenes/user.png")){
+                      
+                      webFile = SD.open("imagenes/user.png"); 
+                      if (webFile) {
+                          
+                            client.println("HTTP/1.1 200 OK");
+                            client.println();
+                        }
+                        
+                       
+                    }else if(StrContains(HTTP_req, "GET /css/custom.css")){
+                      
+                      webFile = SD.open("css/custom.css"); 
+                      
+                      if (webFile) {
+                            archivo_css(client);
+                            
+                        }
+                        
+                    }else if(StrContains(HTTP_req, "GET /css/normalize.css")){
+                      
+                      webFile = SD.open("css/normalize.css"); 
+                      if (webFile) {
+                            archivo_css(client);
+                      }
+                        
+                    }else if(StrContains(HTTP_req, "GET /css/skeleton.css")){
+                      
+                      webFile = SD.open("css/skeleton.css"); 
+                      if (webFile) {
+                        archivo_css(client);
+                      }
+                        
+                    }else if(StrContains(HTTP_req, "GET /fonts/Cherry Monospace-Light.ttf")){
+                      
+                      webFile = SD.open("fonts/Cherry Monospace-Light.ttf"); 
+                      if (webFile) {
+                            client.println(F("HTTP/1.1 200 OK\n"
+                                             "Content-Type: font/ttf7i\n"
+                                             "Connection: keep-alive\n"));
+                        }
+                        
+                    }else if(StrContains(HTTP_req, "GET /imagenes/log.png")){
+                      
+                      webFile = SD.open("imagenes/log.png"); 
+                      if (webFile) {
+                            client.println("HTTP/1.1 200 OK");
+                            client.println();
+                        }
+                        
+                    }
+                   
+                    //-------------------------------
+                    if (webFile) {
+                        while(webFile.available()) {
+                            client.write(webFile.read()); // send web page to client
+                        }
+                        webFile.close();
+                    }
+                    
+                    req_index = 0;
+                    StrClear(HTTP_req, REQ_BUF_SZ);
+                    break;
+                }
+              
+                if (c == '\n') {   
+                    currentLineIsBlank = true;
+                }else if (c != '\r') {  
+                    currentLineIsBlank = false;
+                }
+            } 
+        }
+        delay(1);      
+        client.stop(); 
+    } 
+}
+
+void StrClear(char *str, char length)
+{
+    for (int i = 0; i < length; i++) {
+        str[i] = 0;
+    }
+}
+
+char StrContains(char *str, char *sfind)
+{
+    char found = 0;
+    char index = 0;
+    char len;
+
+    len = strlen(str);
+    
+    if (strlen(sfind) > len) {
+        return 0;
+    }
+    while (index < len) {
+        if (str[index] == sfind[found]) {
+            found++;
+            if (strlen(sfind) == found) {
+                return 1;
+            }
+        }
+        else {
+            found = 0;
+        }
+        index++;
+    }
+    return 0;
+}
+
+void archivo_css(EthernetClient &client){
+  client.println(F("HTTP/1.1 200 OK\n"
+                   "Content-Type: text/css\n"
+                   "Connection: keep-alive\n"));
+}

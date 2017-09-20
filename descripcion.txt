@@ -1,0 +1,9 @@
+Este codigo eniva archivos mime de tipo css, html, imagenes y archivos responsive designe como /css/skeleton.css y /css/normaliza.css y un archivo personalizado llamado /css/custom.css
+
+Envia una pagina adaptada a dispositivos moviles gracias a SKELETON.
+
+No hace ninguna accion.
+
+Aun no ejecuta javascript pero está en la capacidad si se modifica el codigo.
+
+Actualmente la IP es 192.168.1.45
